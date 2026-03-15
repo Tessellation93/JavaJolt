@@ -4,10 +4,10 @@ A RESTful Java backend for a coding learning platform, enabling user authenticat
 
 **Tech Stack:**
 
-| **Layer**    | **Technology**                        |
+| **Layer**    | **Technology**                |
 |----------|-----------------------------------|
 | Language | Java 17                           |
-| Framework | Javalin 7                         |
+| Framework | Javalin 7                        |
 | ORM      | Hibernate 6 / JPA                 |
 | Database | PostgreSQL 16                     |
 | Security | JWT (JJWT 0.12.3) + BCrypt        |
@@ -23,9 +23,9 @@ The project follows a layered architecture with separation of concerns across fi
 
 **Controllers** receive HTTP requests, extract parameters, delegate to the service layer and return responses. They contain no business logic.
 
-Services contain all business logic — input validation, orchestration between DAOs and domain exception throwing. They have no knowledge of HTTP context.
+Services contain all business logic, input validation, orchestration between DAOs and domain exception throwing. They have no knowledge of HTTP context.
 
-**DAOs** handle all database operations via Hibernate EntityManager. BaseDAO provides generic CRUD via reflection. Each DAO extends it with entity-specific JPQL queries.
+**DAOs** handle all database operations via Hibernate EntityManager. BaseDAO provides generic CRUD via reflection. Each DAO extends it with entity specific JPQL queries.
 
 **Entities** are JPA-annotated classes mapped to PostgreSQL tables. All implement soft delete via isDeleted and carry a createdAt timestamp set on persist.
 
