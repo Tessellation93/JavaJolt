@@ -19,15 +19,13 @@ public class StackOverflowController {
     }
 
     public void getQuestions(Context ctx) {
-        String tag = ctx.queryParamAsClass("tag", String.class).getOrDefault("java");
         int pageSize = ctx.queryParamAsClass("size", Integer.class).getOrDefault(10);
-
         if (pageSize > 25) pageSize = 25;
 
-        logger.info("GET /api/stackoverflow/questions?tag={}&size={}", tag, pageSize);
+        logger.info("GET /api/stackoverflow/questions?size={}", pageSize);
 
         try {
-            List<StackOverflowQuestionDTO> questions = stackOverflowService.fetchQuestions(tag, pageSize);
+            List<StackOverflowQuestionDTO> questions = stackOverflowService.fetchQuestions("java", pageSize);
             ctx.json(questions).status(200);
         } catch (Exception e) {
             logger.error("Failed to fetch Stack Overflow questions: {}", e.getMessage());
