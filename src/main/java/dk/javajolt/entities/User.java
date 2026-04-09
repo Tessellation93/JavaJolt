@@ -31,9 +31,6 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @Column(name = "is_admin", nullable = false)
-    private boolean isAdmin = false;
-
     @Column(name = "is_deleted", nullable = false)
     private boolean isDeleted = false;
 
@@ -52,13 +49,14 @@ public class User {
         this.username = username;
         this.email = email;
         this.password = hashPassword(password);
-        this.isAdmin = false;
         this.isDeleted = false;
     }
 
     public User(String username, String email, String password, boolean isAdmin) {
         this(username, email, password);
-        this.isAdmin = isAdmin;
+        if (isAdmin) {
+            this.roles.add(new Role("ADMIN"));
+        }
     }
 
     @PrePersist
@@ -76,18 +74,16 @@ public class User {
         return BCrypt.checkpw(plainPassword, this.password);
     }
 
+    public boolean isAdmin() {
+        return roles.stream().anyMatch(r -> r.getName().equals("ADMIN"));
+    }
+
     public void addRole(Role role) {
         this.roles.add(role);
-        if (role.getName().equals("ADMIN")) {
-            this.isAdmin = true;
-        }
     }
 
     public void removeRole(String roleName) {
         this.roles.removeIf(r -> r.getName().equals(roleName.toUpperCase()));
-        if (roleName.equalsIgnoreCase("ADMIN")) {
-            this.isAdmin = false;
-        }
     }
 
     public Set<String> getRolesAsStrings() {
@@ -101,6 +97,6 @@ public class User {
     @Override
     public String toString() {
         return "User{id=" + id + ", username='" + username + "', email='" + email +
-                "', isAdmin=" + isAdmin + ", isDeleted=" + isDeleted + "}";
+                "', isDeleted=" + isDeleted + "}";
     }
 }

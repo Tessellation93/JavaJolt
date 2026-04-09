@@ -29,7 +29,6 @@ public class UserDTO {
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
     public boolean isAdmin() { return isAdmin; }
-    public void setAdmin(boolean admin) { isAdmin = admin; }
     public String getCreatedAt() { return createdAt; }
     public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
 }
