@@ -1,5 +1,10 @@
 **JavaJolt — Backend API**
 
+Live API: `http://209.38.230.212:7070`
+
+A RESTful Java backend for a coding learning platform, enabling user authentication, course management, exercise tracking and progress persistence via a layered architecture. Developed as a 3rd semester portfolio project at CPH Business Academy.
+
+
 A RESTful Java backend for a coding learning platform, enabling user authentication, course management, exercise tracking and progress persistence via a layered architecture. Developed as a 3rd semester portfolio project at CPH Business Academy.
 
 **Tech Stack:**
