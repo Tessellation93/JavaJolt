@@ -1,0 +1,35 @@
+services:
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: ${JDBC_USER}
+      POSTGRES_PASSWORD: ${JDBC_PASSWORD}
+      POSTGRES_DB: ${JDBC_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  app:
+    image: tesselationvs/javajolt:latest
+    environment:
+      DEPLOYED: "true"
+      JDBC_USER: ${JDBC_USER}
+      JDBC_PASSWORD: ${JDBC_PASSWORD}
+      JDBC_DB: ${JDBC_DB}
+      JDBC_CONNECTION_STRING: ${JDBC_CONNECTION_STRING}
+      JWT_SECRET: ${JWT_SECRET}
+    ports:
+      - "7070:7070"
+    depends_on:
+      - db
+    restart: unless-stopped
+
+  watchtower:
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: --interval 30
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

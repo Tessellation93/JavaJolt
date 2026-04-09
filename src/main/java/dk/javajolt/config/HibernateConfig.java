@@ -3,6 +3,9 @@ package dk.javajolt.config;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class HibernateConfig {
 
     private static EntityManagerFactory emf;
@@ -10,16 +13,20 @@ public class HibernateConfig {
     private HibernateConfig() {}
 
     public static EntityManagerFactory getEntityManagerFactory() {
-
         if (emf == null) {
-
-            String unit = System.getProperty("test") != null
-                    ? "javajolt-test-pu"
-                    : "javajolt-pu";
-
-            emf = Persistence.createEntityManagerFactory(unit);
+            if (System.getProperty("test") != null) {
+                emf = Persistence.createEntityManagerFactory("javajolt-test-pu");
+            } else if (System.getenv("DEPLOYED") != null) {
+                Map<String, String> props = new HashMap<>();
+                props.put("jakarta.persistence.jdbc.url",
+                        String.format(System.getenv("JDBC_CONNECTION_STRING"), System.getenv("JDBC_DB")));
+                props.put("jakarta.persistence.jdbc.user", System.getenv("JDBC_USER"));
+                props.put("jakarta.persistence.jdbc.password", System.getenv("JDBC_PASSWORD"));
+                emf = Persistence.createEntityManagerFactory("javajolt-pu", props);
+            } else {
+                emf = Persistence.createEntityManagerFactory("javajolt-pu");
+            }
         }
-
         return emf;
     }
 
