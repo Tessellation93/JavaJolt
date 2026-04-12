@@ -35,6 +35,19 @@ public class UserService {
                 "roles", created.getRolesAsStrings()
         );
     }
+    public Map<String, Object> login(String email, String password) {
+        User user = userDAO.findByEmail(email);
+        if (user == null || !user.verifyPassword(password)) {
+            throw new IllegalArgumentException("Invalid email or password");
+        }
+        String token = TokenUtils.generateToken(user);
+        return Map.of(
+                "token", token,
+                "userId", user.getId(),
+                "username", user.getUsername(),
+                "roles", user.getRolesAsStrings()
+        );
+    }
     public UserDTO createUser(String username, String email, String password, boolean isAdmin) {
         User user = new User(username, email, password, isAdmin);
         return new UserDTO(userDAO.create(user));
