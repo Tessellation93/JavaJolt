@@ -1,47 +1,75 @@
 # JavaJolt — Entity Relationship Diagram
+
 ```mermaid
 erDiagram
     users {
-        BIGINT id PK
-        VARCHAR username UK
-        VARCHAR email UK
-        VARCHAR password
-        VARCHAR role
-        BOOLEAN deleted
-        TIMESTAMP created_at
+        bigint id PK
+        varchar username UK
+        varchar email UK
+        varchar password
+        boolean is_deleted
+        timestamp created_at
     }
-
+    roles {
+        bigint id PK
+        varchar name
+    }
+    user_roles {
+        bigint user_id FK
+        bigint role_id FK
+    }
+    courses {
+        bigint id PK
+        varchar name
+        varchar programming_language
+        varchar difficulty
+        boolean is_deleted
+        timestamp created_at
+    }
     lessons {
-        BIGINT id PK
-        VARCHAR title
-        VARCHAR programming_language
-        VARCHAR difficulty
-        TEXT content
-        TEXT code_example
-        INT estimated_minutes
-        INT order_index
-        TIMESTAMP created_at
+        bigint id PK
+        bigint course_id FK
+        varchar title
+        int order_index
+        boolean is_deleted
+        timestamp created_at
     }
-
     exercises {
-        BIGINT id PK
-        BIGINT lesson_id FK
-        VARCHAR title
-        TEXT description
-        VARCHAR difficulty
-        INT order_index
+        bigint id PK
+        bigint lesson_id FK
+        varchar title
+        varchar difficulty
+        boolean is_deleted
+        timestamp created_at
     }
-
     progress {
-        BIGINT id PK
-        BIGINT user_id FK
-        BIGINT exercise_id FK
-        BOOLEAN completed
-        INT score
-        TIMESTAMP completed_at
+        bigint id PK
+        bigint user_id FK
+        bigint exercise_id FK
+        boolean completed
+        int score
+        timestamp created_at
+        timestamp completed_at
     }
 
-    users ||--o{ progress : "has"
+    users ||--o{ user_roles : "has"
+    roles ||--o{ user_roles : "assigned to"
+    courses ||--o{ lessons : "contains"
     lessons ||--o{ exercises : "contains"
-    exercises ||--o{ progress : "tracked by"
+    users ||--o{ progress : "tracks"
+    exercises ||--o{ progress : "tracked in"
 ```
+
+## Relationships
+
+- **users ↔ roles** — Many-to-many via `user_roles` join table. A user can have multiple roles (USER, ADMIN). A role can belong to many users.
+- **courses → lessons** — One-to-many. A course contains many lessons ordered by `order_index`.
+- **lessons → exercises** — One-to-many. A lesson contains many exercises.
+- **users ↔ exercises** — Many-to-many via `progress`. Each progress row tracks one user's completion of one exercise, including score and timestamp.
+
+## Design Decisions
+
+- All entities except `roles` and `user_roles` carry an `is_deleted` flag for soft delete — data is never permanently removed.
+- `password` stores a BCrypt hash — plain text is never persisted.
+- `isAdmin` is not stored as a column on `users` — it is derived at runtime from the roles collection.
+- Surrogate keys (`bigint id`) used on all tables for stable, fast joins.
