@@ -1,23 +1,25 @@
 package dk.javajolt.daos;
-
 import dk.javajolt.entities.Role;
 import dk.javajolt.entities.User;
 import jakarta.persistence.EntityManager;
-
 public class UserDAO extends BaseDAO<User> {
-
-    private static UserDAO instance;
-
+    private static volatile UserDAO instance;
     private UserDAO() {
         super(User.class);
     }
-
-    public static UserDAO getInstance() {
+    public static synchronized UserDAO getInstance() {
         if (instance == null) {
             instance = new UserDAO();
         }
         return instance;
     }
+    //    private static UserDAO instance;
+    //    public static UserDAO getInstance() {
+    //        if (instance == null) {
+    //            instance = new UserDAO();
+    //        }
+    //        return instance;
+    //    }
 
     public User findByEmail(String email) {
         EntityManager em = emf.createEntityManager();
@@ -31,7 +33,6 @@ public class UserDAO extends BaseDAO<User> {
             em.close();
         }
     }
-
     public User findByUsername(String username) {
         EntityManager em = emf.createEntityManager();
         try {
@@ -44,7 +45,6 @@ public class UserDAO extends BaseDAO<User> {
             em.close();
         }
     }
-
     public Role createRole(String roleName) {
         EntityManager em = emf.createEntityManager();
         try {
@@ -66,7 +66,6 @@ public class UserDAO extends BaseDAO<User> {
             em.close();
         }
     }
-
     public User addRole(String username, String roleName) {
         EntityManager em = emf.createEntityManager();
         try {

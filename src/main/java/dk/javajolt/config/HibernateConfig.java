@@ -1,18 +1,12 @@
 package dk.javajolt.config;
-
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
-
 import java.util.HashMap;
 import java.util.Map;
-
 public class HibernateConfig {
-
-    private static EntityManagerFactory emf;
-
+    private static volatile EntityManagerFactory emf;
     private HibernateConfig() {}
-
-    public static EntityManagerFactory getEntityManagerFactory() {
+    public static synchronized EntityManagerFactory getEntityManagerFactory() {
         if (emf == null) {
             if (System.getProperty("test") != null) {
                 emf = Persistence.createEntityManagerFactory("javajolt-test-pu");
@@ -29,7 +23,13 @@ public class HibernateConfig {
         }
         return emf;
     }
-
+    //    private static EntityManagerFactory emf;
+//    public static EntityManagerFactory getEntityManagerFactory() {
+//        if (emf == null) {
+//            ...
+//        }
+//        return emf;
+//    }
     public static void closeEntityManagerFactory() {
         if (emf != null && emf.isOpen()) {
             emf.close();

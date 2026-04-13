@@ -1,25 +1,25 @@
 package dk.javajolt.daos;
-
 import dk.javajolt.entities.Course;
 import jakarta.persistence.EntityManager;
-
 import java.util.List;
-
 public class CourseDAO extends BaseDAO<Course> {
-
-    private static CourseDAO instance;
-
+    private static volatile CourseDAO instance;
     private CourseDAO() {
         super(Course.class);
     }
-
-    public static CourseDAO getInstance() {
+    public static synchronized CourseDAO getInstance() {
         if (instance == null) {
             instance = new CourseDAO();
         }
         return instance;
     }
-
+    //    private static CourseDAO instance;
+//    public static CourseDAO getInstance() {
+//        if (instance == null) {
+//            instance = new CourseDAO();
+//        }
+//        return instance;
+//    }
     public List<Course> findByLanguage(String language) {
         EntityManager em = emf.createEntityManager();
         try {
@@ -30,7 +30,6 @@ public class CourseDAO extends BaseDAO<Course> {
             em.close();
         }
     }
-
     public List<Course> findByDifficulty(String difficulty) {
         EntityManager em = emf.createEntityManager();
         try {

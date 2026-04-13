@@ -9,9 +9,11 @@ import java.util.Map;
 import java.util.stream.Collectors;
 public class UserService {
     private final UserDAO userDAO;
+
     public UserService() {
         this.userDAO = UserDAO.getInstance();
     }
+
     public Map<String, Object> register(String username, String email, String password) {
         if (username == null || email == null || password == null) {
             throw new IllegalArgumentException("Username, email and password are required");
